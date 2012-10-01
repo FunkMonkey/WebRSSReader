@@ -1,47 +1,81 @@
 var https = require("https");
 var RequestHelper = require("./RequestHelper");
 
-var params = "accountType=GOOGLE&service=reader&output=json&client=WebRSSReader";
+var url = require("url");
+
+var commonParams = { 
+	accountType: "GOOGLE",
+	service: "reader",
+	output: "json",
+	client:"WebRSSReader"
+};
+
+function toQueryString(obj)
+{
+	var queryString = "";
+	for(var paramName in obj)
+	{
+		if(queryString.length)
+			queryString += "&";
+
+		queryString += paramName + "=" + encodeURIComponent(obj[paramName]);
+	}
+	return queryString;
+}
 
 function request(req, res){
 	
+	var options;
+	var params = Object.create(commonParams);
+
 	if(req.url.indexOf("/greader/login") === 0)
 	{
 		// logging in via ClientLogin
 		console.log(req.body);
 
-		var options = {
+		params.ck = Date.now();
+		params.Email = req.body.username;
+		params.Passwd = req.body.password;
+
+		options = {
 			host: "www.google.com",
-			path: "/accounts/ClientLogin?" + params +
-			                          "&ck=" + Date.now() + 
-			                          "&Email=" + encodeURIComponent(req.body.username) +
-			                          "&Passwd=" + encodeURIComponent(req.body.password)
+			path: "/accounts/ClientLogin?" + toQueryString(params)
 		};
 
 		RequestHelper.get(https, options, function(loginRes){
 			var auth = loginRes.data.substring(loginRes.data.indexOf("Auth=") + 5);
 			console.log(auth);
+
+			console.log(req.session);
+			req.session.auth = auth;
+
 			res.end("sdfsfddsf");
 		});
-
-		
 	}
 	else if(req.url.indexOf("/greader/query/") === 0)
 	{
-		/*https.get("https://www.google.com/reader/api/0/user-info?output=json", function(get_res) {
-			var data = '';
-			get_res.on('data', function(chunk) {
-				// append chunk to your data
-				data += chunk;
-			});
+		var parsedURL = url.parse(req.url);
+		var queryString = parsedURL.pathname + "?" + toQueryString(params) + ((parsedURL.query.length !== 0) ? "&" : "") + parsedURL.query; 
+		console.log(queryString);
+		res.end("sdfsfddsf");
 
-			get_res.on('end', function() {
-				res.end(data);
-			});
+		// options = {
+		// 	host: "www.google.com",
+		// 	path: "/accounts/ClientLogin?" + params +
+		// 	                          "&ck=" + Date.now() + 
+		// 	                          "&Email=" + encodeURIComponent(req.body.username) +
+		// 	                          "&Passwd=" + encodeURIComponent(req.body.password)
+		// };
 
-		}).on('error', function(e) {
-			console.log("Got error: " + e.message);
-		});*/
+		// RequestHelper.get(https, options, function(loginRes){
+		// 	var auth = loginRes.data.substring(loginRes.data.indexOf("Auth=") + 5);
+		// 	console.log(auth);
+
+		// 	console.log(req.session);
+		// 	req.session.auth = auth;
+
+		// 	res.end("sdfsfddsf");
+		// });
 	}
 	else
 	{

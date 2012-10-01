@@ -9,6 +9,8 @@ var app = connect()
 	.use(connect.logger('dev'))
 	.use(connect.static('../webclient'))
 	.use(connect.bodyParser())
+	.use(connect.cookieParser())
+	.use(connect.session({ secret: 'keyboard cat rocks'}))
 	.use(function(req, res){
 
 		if(req.url.indexOf("/greader/") === 0)
