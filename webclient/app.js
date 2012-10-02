@@ -20,14 +20,22 @@ requirejs(["RSS/GoogleReaderAPI"],
 	function(GoogleReaderAPI) {
 
 
-		$first("#greader_login").addEventListener("click", function(){
-				var username = $first("#greader_username").value;
-				var password = $first("#greader_password").value;
+		$first("#greader_login_form").onsubmit = function(){
+				var username = $first("#greader_login_username").value;
+				var password = $first("#greader_login_password").value;
 
 				console.log(username + " " + password);
 
 				GoogleReaderAPI.login(username, password).then(function(){
 						console.log("logged in");
+					});
+
+				return false;
+			};
+
+		$first("#greader_test").addEventListener("click", function(){
+				GoogleReaderAPI.getTags().then(function(res){
+						console.log(res);
 					});
 			});
 

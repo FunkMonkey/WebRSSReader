@@ -13,7 +13,7 @@ var app = connect()
 	.use(connect.session({ secret: 'keyboard cat rocks'}))
 	.use(function(req, res){
 
-		if(req.url.indexOf("/greader/") === 0)
+		if(req.url.indexOf("/reader/") === 0)
 		{
 			GoogleReaderProxy.request(req, res);
 		}

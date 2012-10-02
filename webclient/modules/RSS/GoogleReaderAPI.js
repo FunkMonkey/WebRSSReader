@@ -1,4 +1,6 @@
-define(function() {
+define(["XHR"], function(XHR) {
+
+	var BASE_URL_API = "/reader/api/0/";
 
 	var GoogleReaderAPI = {
 
@@ -11,20 +13,40 @@ define(function() {
 		 */
 		login: function login(username, password)
 		{
-			var deferred = Q.defer();
+			return XHR({
+					url:     "/reader/login",
+					method:  "POST",
+					headers: {"Content-Type": "application/x-www-form-urlencoded"},
+					data:    "username=" + encodeURIComponent(username) + 
+					         "&password=" + encodeURIComponent(password)
+				});
 
-			var xmlhttp = new XMLHttpRequest();
-			xmlhttp.open("POST", "/greader/login", true);
-			xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-			xmlhttp.onreadystatechange = function(){
-					if(xmlhttp.readyState === 4)
-						deferred.resolve();
-				};
-			xmlhttp.send( "username=" + encodeURIComponent(username) + 
-			              "&password=" + encodeURIComponent(password));
+		},
 
-			return deferred.promise;
-		}
+		/**
+		 * Returns a list of subscriptions
+		 * 
+		 * @return {Q.Promise} Promise, resolves with parsed JSON response
+		 */
+		getSubscriptions: function getSubscriptions(){
+			return XHR({
+					url:     BASE_URL_API + "subscription/list?output=json",
+					json:    true
+				});
+		},
+
+		/**
+		 * Returns a list of tags
+		 * 
+		 * @return {Q.Promise} Promise, resolves with parsed JSON response
+		 */
+		getTags: function getTags(){
+			return XHR({
+					url:     BASE_URL_API + "tag/list?output=json",
+					json:    true
+				});
+		},
+
 
 	};
 	

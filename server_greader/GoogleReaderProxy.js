@@ -1,7 +1,10 @@
+var http = require("http");
 var https = require("https");
 var RequestHelper = require("./RequestHelper");
 
 var url = require("url");
+
+var READER_BASE_PATHNAME = "/reader/api/0/";
 
 var commonParams = { 
 	accountType: "GOOGLE",
@@ -28,7 +31,10 @@ function request(req, res){
 	var options;
 	var params = Object.create(commonParams);
 
-	if(req.url.indexOf("/greader/login") === 0)
+	console.log("Got request");
+
+	// proxy for logging in
+	if(req.url.indexOf("/reader/login") === 0)
 	{
 		// logging in via ClientLogin
 		console.log(req.body);
@@ -38,44 +44,51 @@ function request(req, res){
 		params.Passwd = req.body.password;
 
 		options = {
-			host: "www.google.com",
-			path: "/accounts/ClientLogin?" + toQueryString(params)
-		};
+				host: "www.google.com",
+				path: "/accounts/ClientLogin?" + toQueryString(params)
+			};
 
 		RequestHelper.get(https, options, function(loginRes){
 			var auth = loginRes.data.substring(loginRes.data.indexOf("Auth=") + 5);
+			console.log(loginRes.statusCode);
 			console.log(auth);
 
-			console.log(req.session);
 			req.session.auth = auth;
 
-			res.end("sdfsfddsf");
-		});
+			res.end("Finished Login Request: " + loginRes.statusCode + "(" + http.STATUS_CODES[loginRes.statusCode] + ")");
+		}).on("error", function(e){console.log("ERROR: " + e.message);});
 	}
-	else if(req.url.indexOf("/greader/query/") === 0)
+	// proxy for all reader API requests
+	else if(req.url.indexOf("/reader/api/0/") === 0)
 	{
 		var parsedURL = url.parse(req.url);
-		var queryString = parsedURL.pathname + "?" + toQueryString(params) + ((parsedURL.query.length !== 0) ? "&" : "") + parsedURL.query; 
-		console.log(queryString);
-		res.end("sdfsfddsf");
+		//var pathname = parsedURL.pathname.substring(14);
+		var pathAndQueryString = parsedURL.pathname + "?" + toQueryString(params) + ((parsedURL.query.length !== 0) ? "&" : "") + parsedURL.query; 
+		console.log(pathAndQueryString);
 
-		// options = {
-		// 	host: "www.google.com",
-		// 	path: "/accounts/ClientLogin?" + params +
-		// 	                          "&ck=" + Date.now() + 
-		// 	                          "&Email=" + encodeURIComponent(req.body.username) +
-		// 	                          "&Passwd=" + encodeURIComponent(req.body.password)
-		// };
+		options = {
+				host: "www.google.com",
+				path: pathAndQueryString,
+				headers: {
+							"Content-type": "application/x-www-form-urlencoded",
+							"Authorization": "GoogleLogin auth=" + req.session.auth
+						 }
+			};
 
-		// RequestHelper.get(https, options, function(loginRes){
-		// 	var auth = loginRes.data.substring(loginRes.data.indexOf("Auth=") + 5);
-		// 	console.log(auth);
+		RequestHelper.get(https, options, function(readerRes){
 
-		// 	console.log(req.session);
-		// 	req.session.auth = auth;
+			if(readerRes.statusCode === 200)
+			{
+				res.end(readerRes.data);
+				console.log(readerRes.data);
+			}
+			else
+			{
+				res.statusCode = readerRes.statusCode;
+				res.end();
+			}
+		}).on("error", function(e){console.log("ERROR: " + e.message);}); // TODO: res
 
-		// 	res.end("sdfsfddsf");
-		// });
 	}
 	else
 	{
