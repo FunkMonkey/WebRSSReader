@@ -31,13 +31,10 @@ function request(req, res){
 	var options;
 	var params = Object.create(commonParams);
 
-	console.log("Got request");
-
 	// proxy for logging in
 	if(req.url.indexOf("/reader/login") === 0)
 	{
 		// logging in via ClientLogin
-		console.log(req.body);
 
 		params.ck = Date.now();
 		params.Email = req.body.username;
@@ -64,7 +61,6 @@ function request(req, res){
 		var parsedURL = url.parse(req.url);
 		//var pathname = parsedURL.pathname.substring(14);
 		var pathAndQueryString = parsedURL.pathname + "?" + toQueryString(params) + ((parsedURL.query.length !== 0) ? "&" : "") + parsedURL.query; 
-		console.log(pathAndQueryString);
 
 		options = {
 				host: "www.google.com",
@@ -80,7 +76,6 @@ function request(req, res){
 			if(readerRes.statusCode === 200)
 			{
 				res.end(readerRes.data);
-				console.log(readerRes.data);
 			}
 			else
 			{

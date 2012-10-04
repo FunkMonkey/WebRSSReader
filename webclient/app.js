@@ -16,8 +16,8 @@ requirejs.config({
 	}
 });
 
-requirejs(["RSS/GoogleReaderAPI"],
-	function(GoogleReaderAPI) {
+requirejs(["RSS/GoogleReader/API", "RSS/GoogleReader/FeedProvider"],
+	function(GoogleReaderAPI, GoogleReaderFeedProvider) {
 
 
 		$first("#greader_login_form").onsubmit = function(){
@@ -34,13 +34,16 @@ requirejs(["RSS/GoogleReaderAPI"],
 			};
 
 		$first("#greader_test").addEventListener("click", function(){
-				GoogleReaderAPI.getTags().then(function(res){
+				// GoogleReaderAPI.getTags().then(function(res){
+				// 		console.log(res);
+				// 	});
+				
+				var tagList = GoogleReaderFeedProvider.createTagList();
+				tagList.updateTagList().then(function(res){
 						console.log(res);
 					});
 			});
 
-		console.log("start");
-		
 		/*GoogleFeedAPI.initialize().then(function(){
 			console.log("init");
 
