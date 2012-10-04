@@ -22,7 +22,16 @@ define(function() {
 			if([200,304].indexOf(req.status) === -1) {
 				deferred.reject(new Error('Server responded with a status of ' + req.status));
 			} else {
-				deferred.resolve((options.json) ? JSON.parse(req.responseText) : req.responseText);
+				if(options.json)
+				{
+					var jsonRes = JSON.parse(req.responseText);
+					deferred.resolve((options.jsonFilter) ? options.jsonFilter(jsonRes)  : jsonRes);
+				}
+				else
+				{
+					deferred.resolve(req.responseText);
+				}
+				
 			}
 		};
 

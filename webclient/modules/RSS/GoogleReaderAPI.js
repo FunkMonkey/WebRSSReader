@@ -31,7 +31,8 @@ define(["XHR"], function(XHR) {
 		getSubscriptions: function getSubscriptions(){
 			return XHR({
 					url:     BASE_URL_API + "subscription/list?output=json",
-					json:    true
+					json:    true,
+					jsonFilter: function(jsonRes){return jsonRes.subscriptions;}
 				});
 		},
 
@@ -43,7 +44,8 @@ define(["XHR"], function(XHR) {
 		getTags: function getTags(){
 			return XHR({
 					url:     BASE_URL_API + "tag/list?output=json",
-					json:    true
+					json:    true,
+					jsonFilter: function(jsonRes){return jsonRes.tags;}
 				});
 		},
 
