@@ -1,28 +1,46 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>RSSReader</title>
+	<meta charset="utf-8">
+	<title>RSSReader</title>
 
-  
-  <!--<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-  <script type="text/javascript">
+	
+	<!--<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script type="text/javascript">
 
-    // TODO: well, can't seem to load "feeds" from AMD module
-    google.load("feeds", "1");
+		// TODO: well, can't seem to load "feeds" from AMD module
+		google.load("feeds", "1");
 
-  </script>-->
-  <script src="libs/q.min.js"></script>
-  <script src="libs/require.js" data-main="app.js"></script>
+	</script>-->
+	<link href="libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/main.css" rel="stylesheet">
+	<script src="libs/q.min.js"></script>
+	<script src="libs/require.js" data-main="app.js"></script>
 
 </head>
 <body>
-    <div id="feed"></div>
-    <form id="greader_login_form" action="ITrickedYou">
-      Username: <input id="greader_login_username" type="text" />
-      Password: <input id="greader_login_password" type="password" />
-      <input id="greader_login_submit" type="submit" value="Login" />
-    <form>
-    <input id="greader_test" type="button" value="test" />
+	<div class="container">
+		<div id="header" class="header hero-unit">
+			<h1>RSSReader</h1>
+			<div id="feed"></div>
+				<form id="greader_login_form" action="ITrickedYou">
+					Username: <input id="greader_login_username" type="text" />
+					Password: <input id="greader_login_password" type="password" />
+					<input id="greader_login_submit" type="submit" value="Login" />
+				<form>
+				<input id="greader_test" type="button" value="test" />
+		</div>
+		<div class="row-fluid">
+			<div class="span2">
+				<div id="sidebar" class="sidebar-nav well">
+				</div>
+			</div>
+			<div id="content" class="content span10">
+				
+			</div>
+		</div>
+	</div>
+
+
 </body>
 </html>

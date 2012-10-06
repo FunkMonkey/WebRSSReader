@@ -70,8 +70,6 @@ define(["Utils/EventSender"], function(EventSender){
 							self.addTag(new Tag(self._provider, tagData.label, tagData.type, tagData.data));
 					}
 
-					console.log(self.tags);
-
 					self.fire("taglist-update");
 					return result;
 				});

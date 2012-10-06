@@ -16,9 +16,17 @@ requirejs.config({
 	}
 });
 
-requirejs(["RSS/GoogleReader/API", "RSS/GoogleReader/FeedProvider"],
-	function(GoogleReaderAPI, GoogleReaderFeedProvider) {
+window.app = {};
 
+requirejs([ "RSS/GoogleReader/API", 
+	        "RSS/GoogleReader/FeedProvider",
+	        "View/TagListView"],
+	
+	function( GoogleReaderAPI, 
+		      GoogleReaderFeedProvider,
+		      TagListView) {
+
+		var app = window.app;
 
 		$first("#greader_login_form").onsubmit = function(){
 				var username = $first("#greader_login_username").value;
@@ -38,7 +46,10 @@ requirejs(["RSS/GoogleReader/API", "RSS/GoogleReader/FeedProvider"],
 				// 		console.log(res);
 				// 	});
 				
-				var tagList = GoogleReaderFeedProvider.createTagList();
+				var tagList = app.tagList = GoogleReaderFeedProvider.createTagList();
+				var domTagList = new TagListView(tagList);
+				$first("#sidebar").appendChild(domTagList.init());
+
 				tagList.updateTagList().then(function(res){
 						console.log(res);
 					});
@@ -62,4 +73,6 @@ requirejs(["RSS/GoogleReader/API", "RSS/GoogleReader/FeedProvider"],
 					});
 
 		});*/
+
+		return app;
 	});
